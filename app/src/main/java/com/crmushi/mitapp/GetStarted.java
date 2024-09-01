@@ -17,7 +17,8 @@ public class GetStarted extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_started);
-        Button gtstarted=findViewById(R.id.getstarted_btn).setOnClickListener(new View.OnClickListener() {
+        Button gtstarted=findViewById(R.id.getstarted_btn);
+        gtstarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(GetStarted.this, MainActivity.class));
