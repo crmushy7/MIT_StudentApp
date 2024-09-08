@@ -39,5 +39,11 @@ public class Dashboard extends AppCompatActivity {
             Collections.reverse(coursesSetGetList);
             adapter.notifyDataSetChanged();
         }
+        adapter.setOnItemClickListener(new CoursesAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, CoursesSetGet itemSetGet) {
+
+            }
+        });
     }
 }
