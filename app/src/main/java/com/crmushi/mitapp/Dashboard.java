@@ -1,5 +1,6 @@
 package com.crmushi.mitapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,7 @@ public class Dashboard extends AppCompatActivity {
     CoursesAdapter adapter;
     AlertDialog course_description_dialog;
     public static String userID,studentname,studentemail;
-    LinearLayout homebutton,requestbutton,coursesAvailable,requestAvalable;
+    LinearLayout homebutton,requestbutton,coursesAvailable,requestAvalable,profle;
     ProgressBar request_progressbar;
     TextView no_request_text;
 
@@ -59,6 +60,7 @@ public class Dashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        profle=findViewById(R.id.ll_profileBtn);
         request_progressbar=findViewById(R.id.request_progressbar);
         no_request_text=findViewById(R.id.no_request_text);
         request_recyclerview=findViewById(R.id.requests_recyclerview);
@@ -80,6 +82,15 @@ public class Dashboard extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+        profle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent=new Intent(Dashboard.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -154,33 +165,70 @@ public class Dashboard extends AppCompatActivity {
                                     }else {
                                         DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference()
                                                 .child("Requests").push();
-                                        databaseReference.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
-                                            public void onSuccess(Void unused) {
-                                                courseExist.setValue("Applied").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                databaseReference.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void unused) {
-                                                        course_description_dialog.dismiss();
-                                                        Toast.makeText(Dashboard.this, "Success!", Toast.LENGTH_SHORT).show();
+                                                        courseExist.setValue("Applied").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+                                                                DatabaseReference databaseReference1=FirebaseDatabase.getInstance().getReference()
+                                                                        .child("Feedback").child(userID).child(snapshot.getKey().toString());
+                                                                databaseReference1.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void unused) {
+                                                                        course_description_dialog.dismiss();
+                                                                        Toast.makeText(Dashboard.this, "Success!", Toast.LENGTH_SHORT).show();
+
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
                                                     }
                                                 });
                                             }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
                                         });
+
 
                                     }
                                 }else{
                                     DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference()
                                             .child("Requests").push();
-                                    databaseReference.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
-                                        public void onSuccess(Void unused) {
-                                            studentDetails.child(itemSetGet.getCourseName()).setValue("Applied").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            databaseReference.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
-                                                    course_description_dialog.dismiss();
-                                                    Toast.makeText(Dashboard.this, "Success!", Toast.LENGTH_SHORT).show();
+                                                    courseExist.setValue("Applied").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+                                                            DatabaseReference databaseReference1=FirebaseDatabase.getInstance().getReference()
+                                                                    .child("Feedback").child(userID).child(snapshot.getKey().toString());
+                                                            databaseReference1.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+                                                                    course_description_dialog.dismiss();
+                                                                    Toast.makeText(Dashboard.this, "Success!", Toast.LENGTH_SHORT).show();
+
+                                                                }
+                                                            });
+                                                        }
+                                                    });
                                                 }
                                             });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
                                         }
                                     });
 
